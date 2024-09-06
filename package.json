@@ -19,9 +19,12 @@
     "vite-plugin-solid": "^2.8.2"
   },
   "dependencies": {
+    "@ark-ui/solid": "^3.7.0",
     "@solid-primitives/websocket": "^1.2.2",
     "apexcharts": "^3.52.0",
     "solid-apexcharts": "^0.3.4",
+    "solid-bottomsheet": "^1.1.0",
+    "solid-icons": "^1.1.0",
     "solid-js": "^1.8.11"
   }
 }

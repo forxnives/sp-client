@@ -41,12 +41,12 @@ export const colors = () => {
 		candleInfoTextUp: "#089981",
 		candleInfoTextDown: "#e13443",
 		tickColor: "#b2b5be",
-		downCandlesStroke: "#e13443",
-		downCandlesFill: "#e13443",
-		downCandlesTail: "#e13443",
-		upCandlesStroke: "#089981",
-		upCandlesFill: "#089981",
-		upCandlesTail: "#089981",
+		upCandlesStroke: "#e13443",
+		upCandlesFill: "#e13443",
+		upCandlesTail: "#e13443",
+		downCandlesStroke: "#089981",
+		downCandlesFill: "#089981",
+		downCandlesTail: "#089981",
 		selectorLine: "rgba(178,181,190,0.5)",
 		selectorLableBackground: "#2a2e39",
 		selectorLabelText: "#b2b5be",
@@ -58,7 +58,7 @@ export const colors = () => {
 		slStroke: "#F9DB04",
 		tp: "#04F5F9",
 		tpStroke: "#04F5F9",
-		activeTools: "#04F5F9",
+		activeTools: "#5299d3",
 		deActiveTools: "#ffffff",
 	}
 }
@@ -71,8 +71,8 @@ export const config = (width, height) => {
 		paddingLeft: 25,
 		paddingTop: 10,
 		paddingBottom: 30,
-		yPaddingScaleTop: 0.04,
-		yPaddingScaleBottom: 0.03,
+		yPaddingScaleTop: 0.005,
+		yPaddingScaleBottom: 0.005,
 		xTicksTransform: 10,
 		xLabelWidth: 150,
 		xLabelHeight: 25,
@@ -80,7 +80,7 @@ export const config = (width, height) => {
 		yLabelHeight: 25,
 		yLabelFontSize: 12,
 		decimal: 3,
-		charWidth: 7.8,
+		charWidth: 5,
 		selectoreStrokeDashArray: "2,2",
 		timeFormat: "%a %d %b '%y %H:%M",
 		mobileBreakPoint: 600,
@@ -288,7 +288,7 @@ class CandleStickChart {
 			.style("overflow", "inherit")
 			.style("cursor", "crosshair")
 			.attr("id", this.#objectIDs.svgId)
-			.style("margin-top", "-50px")
+		// .style("margin-top", "-50px")
 	}
 
 	#createYaxis() {
@@ -669,20 +669,26 @@ class CandleStickChart {
 
 	#createToolsBtns() {
 		d3.select(`#${this.id}`)
+			.style("position", "relative")
 			.selectAll()
 			.data([0])
 			.enter()
 			.append("div")
 			.attr("id", this.#objectIDs.toolsBtnsContainer)
 			.style("display", "flex")
-			.style("height", "40px")
-			.style("justify-content", "end")
+			.style("flex-direction", "column")
+			.style("justify-content", "flex-end")
+			.style("height", "90px")
+			// .style("border", "2px solid pink")
+			// .style("flex-", "90px")
+			// .style("justify-content", "end")
 			.style("gap", "10px")
 			.style(
 				"padding-right",
 				window.innerWidth > this.#config.mobileBreakPoint ? "20px" : "0"
 			)
-			.style("position", "relative")
+			.style("position", "absolute")
+			.style("bottom", "40px")
 			.style("z-index", "2")
 
 		d3.select(`#${this.#objectIDs.toolsBtnsContainer}`)
@@ -755,7 +761,9 @@ class CandleStickChart {
 		this.#filteredData = this.data
 
 		d3.select("svg").selectAll().data(this.#filteredData).exit()
-		this.#handleRefresh(this.lastE)
+		if (this.lastE) {
+			this.#handleRefresh(this.lastE)
+		}
 	}
 
 	#modeHandler(mode) {
@@ -1213,7 +1221,6 @@ class CandleStickChart {
 
 	#handleScrollZoom(e) {
 		this.lastE = e
-		console.log("normal", this.lastE)
 		let location = getCursorPoint(this.#objectIDs.svgId, e.sourceEvent)
 		this.#zoomFactor *= e.transform.k > 1 ? 1.1 : 0.9
 
