@@ -8,7 +8,6 @@ import {
 import Chart from "./components/organisms/chart"
 import "solid-bottomsheet/styles.css"
 import TopNav from "./components/organisms/topnav"
-import { wait } from "./utils/time"
 import { getData } from "./utils/httpUtils"
 import BottomDrawer from "./components/organisms/bottomdrawer"
 import { parseDate } from "./components/organisms/chart/candleStickChart.js"
@@ -27,7 +26,7 @@ export interface Indicators {
 }
 
 export interface CandleStick {
-	date: string
+	date: number
 	open: number
 	high: number
 	low: number
@@ -44,17 +43,13 @@ function convertData(
 }
 
 const App: Component = () => {
+	const [selectedSymbol, setSelectedSymbol] = createSignal<SelectItem>()
+	const [currentCandle, setCurrentCandle] = createSignal<CandleStick>()
+	const [indicators, setIndicators] = createSignal<Indicators>()
+
 	const [symbols] = createResource(async () => {
 		return await getData({ path: "/symbols" })
-		// await wait(1000)
-		// return [
-		// 	{ label: "Dow 30", value: "DOW30" },
-		// 	{ label: "USD/JPY", value: "USD/JPY", disabled: true },
-		// ]
 	})
-	const [selectedSymbol, setSelectedSymbol] = createSignal<SelectItem>()
-	const [currentPrice, setCurrentPrice] = createSignal<String>()
-	const [indicators, setIndicators] = createSignal<Indicators>()
 
 	const [historicData, { refetch }] = createResource(
 		selectedSymbol,
@@ -91,10 +86,6 @@ const App: Component = () => {
 		})
 	})
 
-	// createEffect(() => {
-	// 	const symbol = selectedSymbol()
-	// })
-
 	return (
 		<div class='h-lvh w-screen'>
 			<TopNav
@@ -102,12 +93,14 @@ const App: Component = () => {
 				selectedSymbol={selectedSymbol}
 				setSelectedSymbol={setSelectedSymbol}
 			/>
-			<Show when={currentPrice()}>
-				<div class='pl-4 absolute text-xl text-[#3A697B]'>{`${currentPrice()}`}</div>
+			<Show when={currentCandle()?.close}>
+				<div class='pl-4 absolute text-xl text-[#3A697B]'>{`${
+					currentCandle().close
+				}`}</div>
 			</Show>
 			<Chart
 				selectedSymbol={selectedSymbol}
-				setCurrentPrice={setCurrentPrice}
+				setCurrentCandle={setCurrentCandle}
 				data={historicData}
 				refetchHistoric={refetch}
 			/>
